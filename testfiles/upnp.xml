@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <UDN>uuid:52411920-AE67-11E4-AB27-0800200C9A66</UDN>
+        <friendlyName>ViaWare DLNA</friendlyName>
+        <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+        <manufacturer>ViaWare - Seth Traverse</manufacturer>
+        <manufacturerURL>http://www.viaware.ca</manufacturerURL>
+        <modelName>ViaWare DLNA</modelName>
+        <modelNumber>0.1</modelNumber>
+        <modelURL>http://www.viaware.ca</modelURL>
+        <dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
+        <iconList>
+            <icon>
+                <mimetype>image/png</mimetype>
+                <width>48</width>
+                <height>48</height>
+                <depth>24</depth>
+                <url>/icon/png48</url>
+            </icon>
+        </iconList>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+                <controlURL>/connectionManager/control</controlURL>
+                <eventSubURL>/connectionManager/event</eventSubURL>
+                <SCPDURL>/connectionManager/desc</SCPDURL>
+            </service>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+                <controlURL>/contentDirectory/control</controlURL>
+                <eventSubURL>/contentDirectory/event</eventSubURL>
+                <SCPDURL>/contentDirectory/desc</SCPDURL>
+            </service>
+        </serviceList>
+    </device>
+</root>

@@ -1,0 +1,102 @@
+*************************************************************
+Testing against Microsoft Windows Media Centre implementation
+*************************************************************
+
+POST to CONTROL
+
+Soapaction: "urn:schemas-upnp-org:service:ContentDirectory:1#Browse"
+Content-type: text/xml;charset="utf-8"
+Host: 192.168.2.242:5050
+
+<?xml version="1.0" encoding="UTF-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <s:Body>
+      <u:Browse xmlns:u="urn:schemas-upnp-org:service:ContentDirectory:1">
+         <ObjectID>0</ObjectID>
+         <BrowseFlag>BrowseDirectChildren</BrowseFlag>
+         <Filter>*</Filter>
+         <StartingIndex>0</StartingIndex>
+         <RequestedCount>50</RequestedCount>
+         <SortCriteria>+dc:title</SortCriteria>
+      </u:Browse>
+   </s:Body>
+</s:Envelope>
+
+------------------------------------------------------------------
+RESPONSE:
+------------------------------------------------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+   <SOAP-ENV:Body>
+      <m:BrowseResponse xmlns:m="urn:schemas-upnp-org:service:ContentDirectory:1">
+         <Result xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="string">&lt;DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/"
+xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"&gt;
+&lt;container id="1" restricted="1" parentID="0" childCount="10" searchable="1"&gt;&lt;dc:title&gt;Music&lt;/dc:title&gt;&lt;upnp:class&gt;object.container&lt;/upnp:class&gt;&lt;upnp:writeStatus&gt;NOT_WRITABLE&lt;/upnp:writeStatus&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.item.audioItem&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.playlistContainer&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.container.genre&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.storageFolder&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.genre.musicGenre&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.item.audioItem.musicTrack&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.album.musicAlbum&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.container.album&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.person.musicArtist&lt;/upnp:searchClass&gt;&lt;/container&gt;
+&lt;container id="2" restricted="1" parentID="0" childCount="8" searchable="1"&gt;&lt;dc:title&gt;Videos&lt;/dc:title&gt;&lt;upnp:class&gt;object.container&lt;/upnp:class&gt;&lt;upnp:writeStatus&gt;NOT_WRITABLE&lt;/upnp:writeStatus&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.playlistContainer&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.person.movieActor&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.item.videoItem&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.container.genre&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.storageFolder&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.item.videoItem.videoBroadcast&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.album.videoAlbum&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.genre.movieGenre&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.container.album&lt;/upnp:searchClass&gt;&lt;/container&gt;
+&lt;container id="3" restricted="1" parentID="0" childCount="7" searchable="1"&gt;&lt;dc:title&gt;Pictures&lt;/dc:title&gt;&lt;upnp:class&gt;object.container&lt;/upnp:class&gt;&lt;upnp:writeStatus&gt;NOT_WRITABLE&lt;/upnp:writeStatus&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.playlistContainer&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.item.imageItem.photo&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.album.photoAlbum&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.storageFolder&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="0"&gt;object.container.album.photoAlbum.dateTaken&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.container.album&lt;/upnp:searchClass&gt;&lt;upnp:searchClass includeDerived="1"&gt;object.item.imageItem&lt;/upnp:searchClass&gt;&lt;/container&gt;
+&lt;container id="12" restricted="1" parentID="0" childCount="2" searchable="0"&gt;&lt;dc:title&gt;Playlists&lt;/dc:title&gt;&lt;upnp:class&gt;object.container&lt;/upnp:class&gt;&lt;upnp:writeStatus&gt;NOT_WRITABLE&lt;/upnp:writeStatus&gt;&lt;/container&gt;
+&lt;/DIDL-Lite&gt;</Result>
+         <NumberReturned xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="ui4">4</NumberReturned>
+         <TotalMatches xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="ui4">4</TotalMatches>
+         <UpdateID xmlns:dt="urn:schemas-microsoft-com:datatypes" dt:dt="ui4">1</UpdateID>
+      </m:BrowseResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+------------------------------------------------------------------
+UNESCAPED Result
+------------------------------------------------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">
+   <container id="1" restricted="1" parentID="0" childCount="10" searchable="1">
+      <dc:title>Music</dc:title>
+      <upnp:class>object.container</upnp:class>
+      <upnp:writeStatus>NOT_WRITABLE</upnp:writeStatus>
+      <upnp:searchClass includeDerived="1">object.item.audioItem</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.playlistContainer</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.container.genre</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.storageFolder</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.genre.musicGenre</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.item.audioItem.musicTrack</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.album.musicAlbum</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.container.album</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.person.musicArtist</upnp:searchClass>
+   </container>
+   <container id="2" restricted="1" parentID="0" childCount="8" searchable="1">
+      <dc:title>Videos</dc:title>
+      <upnp:class>object.container</upnp:class>
+      <upnp:writeStatus>NOT_WRITABLE</upnp:writeStatus>
+      <upnp:searchClass includeDerived="0">object.container.playlistContainer</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.person.movieActor</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.item.videoItem</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.container.genre</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.storageFolder</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.item.videoItem.videoBroadcast</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.album.videoAlbum</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.genre.movieGenre</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.container.album</upnp:searchClass>
+   </container>
+   <container id="3" restricted="1" parentID="0" childCount="7" searchable="1">
+      <dc:title>Pictures</dc:title>
+      <upnp:class>object.container</upnp:class>
+      <upnp:writeStatus>NOT_WRITABLE</upnp:writeStatus>
+      <upnp:searchClass includeDerived="0">object.container.playlistContainer</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.item.imageItem.photo</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.album.photoAlbum</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.storageFolder</upnp:searchClass>
+      <upnp:searchClass includeDerived="0">object.container.album.photoAlbum.dateTaken</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.container.album</upnp:searchClass>
+      <upnp:searchClass includeDerived="1">object.item.imageItem</upnp:searchClass>
+   </container>
+   <container id="12" restricted="1" parentID="0" childCount="2" searchable="0">
+      <dc:title>Playlists</dc:title>
+      <upnp:class>object.container</upnp:class>
+      <upnp:writeStatus>NOT_WRITABLE</upnp:writeStatus>
+   </container>
+</DIDL-Lite>

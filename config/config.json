@@ -1,0 +1,15 @@
+{
+    "serverName": "ViaWare DLNA",
+    "http": {
+        "host": "192.168.2.242",
+        "port": "5050"
+    },
+    "ssdp": {
+        "host": "192.168.2.242",
+        "port": "5051"
+    },
+    "webInterface": {
+        "host": "192.168.2.242",
+        "port": "5052"
+    }
+}
