@@ -1,9 +1,20 @@
 package ca.viaware.dlna.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 public class FileUtils {
+
+    public static String getMime(File file) {
+        try {
+            return Files.probeContentType(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
     public static String removeExtension(File file) {
         String name = file.getName();

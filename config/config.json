@@ -8,8 +8,12 @@
         "host": "192.168.2.242",
         "port": "5051"
     },
-    "webInterface": {
+    "streamServer": {
         "host": "192.168.2.242",
         "port": "5052"
+    },
+    "webInterface": {
+        "host": "192.168.2.242",
+        "port": "5053"
     }
 }

@@ -5,19 +5,27 @@ import ca.viaware.dlna.library.EntryType;
 import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
+import ca.viaware.dlna.settings.SettingsManager;
 import ca.viaware.dlna.upnp.service.*;
 import ca.viaware.dlna.upnp.service.base.Action;
 import ca.viaware.dlna.upnp.service.base.ActionArgument;
 import ca.viaware.dlna.upnp.service.base.Result;
 import ca.viaware.dlna.upnp.service.base.StateVariable;
+import ca.viaware.dlna.util.FileUtils;
 import ca.viaware.dlna.util.XMLUtils;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ContentDirectory extends Service {
 
+    private JSONObject serverConfig;
+    private int updateID = 1;
+
     public ContentDirectory() {
+        serverConfig = SettingsManager.getServerConfig().getJSONObject("streamServer");
+
         registerAction("GetSearchCapabilities", getSearchCapabilities());
         registerAction("GetSortCapabilities", getSortCapabilities());
         registerAction("GetSystemUpdateID", getSystemUpdateID());
@@ -87,44 +95,81 @@ public class ContentDirectory extends Service {
             @Override
             public Result handle(HashMap<String, Object> parameters) {
                 Log.info("Browse flag %0", parameters.get("BrowseFlag"));
-                Log.info("Browsing for children of %0", parameters.get("ObjectID"));
+                ArrayList<LibraryEntry> entries = null;
                 LibraryFactory factory = Library.getFactory();
 
                 int id = Integer.parseInt((String) parameters.get("ObjectID"));
                 if (id == 0) id = -1; //UPnP spec: ID of 0 refers to root object
 
-                ArrayList<LibraryEntry> entries = factory.getChildren(id);
-                Log.info("Found %0 entries", entries.size());
+                if (parameters.get("BrowseFlag").equals("BrowseDirectChildren")) {
+                    Log.info("Browsing for children of %0", parameters.get("ObjectID"));
+                    entries = factory.getChildren(id);
+                }
+                if (parameters.get("BrowseFlag").equals("BrowseMetadata")) {
+                    Log.info("Browsing metadata of %0", parameters.get("ObjectID"));
+                    entries = new ArrayList<LibraryEntry>();
+                    entries.add(factory.get(id));
+                }
+                if (entries != null) {
+                    Log.info("Found %0 entries", entries.size());
 
-                String xml = XMLUtils.escape(toXML(entries));
-                Log.info("XML: " + toXML(entries));
+                    String xml = XMLUtils.escape(toXML(entries, factory));
+                    Log.info("XML: " + toXML(entries, factory));
 
-                Result result = new Result();
-                result.put("Result", xml);
-                result.put("NumberReturned", entries.size());
-                result.put("TotalMatches", entries.size());
-                result.put("UpdateID", 1);
-                return result;
+                    factory.getDatabase().close();
+
+                    Result result = new Result();
+                    result.put("Result", xml);
+                    result.put("NumberReturned", entries.size());
+                    result.put("TotalMatches", entries.size());
+                    result.put("UpdateID", updateID++);
+                    return result;
+                } else {
+                    Result result = new Result();
+                    result.put("Result", "");
+                    result.put("NumberReturned", 0);
+                    result.put("TotalMatches", 0);
+                    result.put("UpdateID", updateID++);
+                    return result;
+                }
             }
         };
     }
 
-    private String toXML(ArrayList<LibraryEntry> items) {
+    private String toXML(ArrayList<LibraryEntry> items, LibraryFactory f) {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
         xml += "<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\">";
 
-        LibraryFactory f = Library.getFactory();
-
         for (LibraryEntry e : items) {
+            String name = XMLUtils.escape(e.getName());
             if (e.getTypeID() == EntryType.CONTAINER) {
                 int children = f.countChildren(e.getId());
 
                 xml += "<container id=\"" + e.getId() + "\" restricted=\"true\" parentID=\"" + e.getParent() + "\" childCount=\"" + children + "\" searchable=\"false\">";
-                xml += "<dc:title>" + e.getName() + "</dc:title>";
+                xml += "<dc:title>" + name + "</dc:title>";
                 xml += "<upnp:class>object.container.storageFolder</upnp:class>";
                 xml += "<upnp:writeStatus>NOT_WRITABLE</upnp:writeStatus>";
                 //xml += "<upnp:searchClass includeDerived=\"0\">object.container</upnp:searchClass>";
                 xml += "</container>";
+            } else {
+                xml += "<item id=\"" + e.getId() + "\" restricted=\"true\" parentID=\"" + e.getParent() + "\">";
+                xml += "<dc:title>" + name + "</dc:title>";
+                //TODO refactor to EntryType and make this system more modular
+                switch (e.getTypeID()) {
+                    case EntryType.AUDIO:
+                        xml += "<upnp:class>object.item.audioItem</upnp:class>";
+                        break;
+                    case EntryType.VIDEO:
+                        xml += "<upnp:class>object.item.videoItem</upnp:class>";
+                        break;
+                    case EntryType.PICTURE:
+                        xml += "<upnp:class>object.item.imageItem</upnp:class>";
+                        break;
+                }
+                xml += "<res protocolInfo=\"http-get:*:" + FileUtils.getMime(e.getLocation()) + ":*\" size=\"" + e.getLocation().length() + "\">";
+                xml += "http://" + serverConfig.getString("host") + ":" + serverConfig.getInt("port") + "/" + e.getId();
+                xml += "</res>";
+                xml += "</item>";
             }
         }
 
