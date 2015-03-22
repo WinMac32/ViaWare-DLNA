@@ -6,6 +6,7 @@ import ca.viaware.dlna.ViaWareDLNA;
 import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
+import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -31,14 +32,19 @@ public class StreamServer {
         server.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                int entryId = Integer.parseInt(StringUtils.cleanNumber(exchange.getRequestURI().getPath()));
+                final int entryId = Integer.parseInt(StringUtils.cleanNumber(exchange.getRequestURI().getPath()));
                 Log.info("Got request for library item %0", entryId);
 
                 while (exchange.getRequestBody().read() != -1) {}
 
-                LibraryFactory factory = Library.getFactory();
-                LibraryEntry entry = factory.get(entryId);
-                factory.getDatabase().close();
+                LibraryEntry entry = (LibraryEntry) Library.runInstance(new LibraryInstanceRunner() {
+                    @Override
+                    public Object run(LibraryFactory factory) {
+                        return factory.get(entryId);
+                    }
+                });
+
+
                 if (entry != null) {
                     File file = entry.getLocation();
                     String mime = Files.probeContentType(file.toPath().toAbsolutePath());

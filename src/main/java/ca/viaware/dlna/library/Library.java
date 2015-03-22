@@ -1,24 +1,22 @@
 package ca.viaware.dlna.library;
 
-import ca.viaware.api.sql.exceptions.ViaWareSQLException;
+import ca.viaware.api.logging.Log;
 import ca.viaware.dlna.database.ExtendedDatabase;
-import ca.viaware.dlna.database.ExtendedDatabaseFactory;
+import ca.viaware.dlna.database.threadsafe.DatabaseQueueManagerManager;
+import ca.viaware.dlna.database.threadsafe.SqlInstanceRunner;
 import ca.viaware.dlna.library.model.LibraryFactory;
+import ca.viaware.dlna.library.model.LibraryInstanceRunner;
+import com.almworks.sqlite4java.SQLiteConnection;
 
 public class Library {
 
-    public static LibraryFactory getFactory() {
-        LibraryFactory factory;
-        ExtendedDatabaseFactory dbFactory = new ExtendedDatabaseFactory();
-        try {
-            ExtendedDatabase db = dbFactory.getDatabase("data/library.db");
-            factory = new LibraryFactory(db);
-        } catch (ViaWareSQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return factory;
+    public static Object runInstance(final LibraryInstanceRunner runner) {
+        return DatabaseQueueManagerManager.getDatabaseQueueManager().run(new SqlInstanceRunner() {
+            @Override
+            protected Object run(SQLiteConnection connection) {
+                return runner.run(new LibraryFactory(new ExtendedDatabase(connection)));
+            }
+        });
     }
 
 }

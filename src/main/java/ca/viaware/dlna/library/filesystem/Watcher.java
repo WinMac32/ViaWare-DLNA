@@ -5,6 +5,8 @@ import ca.viaware.dlna.library.EntryType;
 import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
+import ca.viaware.dlna.library.model.LibraryInstanceRunner;
+import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,12 +22,10 @@ public class Watcher {
 
     private WatchService watchService;
     private Map<WatchKey, Path> keys;
-    private LibraryFactory factory;
 
     public Watcher() throws IOException {
         this.watchService = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<WatchKey, Path>();
-        this.factory = Library.getFactory();
     }
 
     private void register(Path dir) {
@@ -37,13 +37,18 @@ public class Watcher {
     }
 
     public void registerEntries() {
-        LibraryFactory factory = Library.getFactory();
-        ArrayList<LibraryEntry> folderEntries = factory.getAllOfType(EntryType.CONTAINER);
+        Library.runInstance(new LibraryInstanceRunner() {
+            @Override
+            public Object run(LibraryFactory factory) {
+                ArrayList<LibraryEntry> folderEntries = factory.getAllOfType(EntryType.CONTAINER);
 
-        for (LibraryEntry e : folderEntries) {
-            Path dir = e.getLocation().toPath();
-            register(dir);
-        }
+                for (LibraryEntry e : folderEntries) {
+                    Path dir = e.getLocation().toPath();
+                    register(dir);
+                }
+                return null;
+            }
+        });
     }
 
     private void recurseFolder(Path folder) throws IOException {
@@ -56,15 +61,28 @@ public class Watcher {
         });
     }
 
-    private void remove(File f) {
-        LibraryEntry e = factory.getByFile(f);
-        if (e != null) {
-            factory.remove(e, true);
-        }
+    private void remove(final File f) {
+        Library.runInstance(new LibraryInstanceRunner() {
+            @Override
+            public Object run(LibraryFactory factory) {
+                LibraryEntry e = factory.getByFile(f);
+                if (e != null) {
+                    factory.remove(e, true);
+                }
+                return null;
+            }
+        });
     }
 
-    private void add(File f) {
-        factory.addFileNow(f);
+    private void add(final File f) {
+        Library.runInstance(new LibraryInstanceRunner() {
+            @Override
+            public Object run(LibraryFactory factory) {
+                factory.addFileNow(f);
+                return null;
+            }
+        });
+
         if (f.isDirectory()) {
             for (File file : f.listFiles()) {
                 add(file);

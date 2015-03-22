@@ -5,6 +5,7 @@ import ca.viaware.dlna.library.EntryType;
 import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
+import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -49,12 +50,17 @@ public class InterfaceServer {
 
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                JSONArray root = new JSONArray();
-                LibraryFactory factory = Library.getFactory();
-                ArrayList<LibraryEntry> entries = factory.getAll();
+                String json = (String) Library.runInstance(new LibraryInstanceRunner() {
+                    @Override
+                    public Object run(LibraryFactory factory) {
+                        JSONArray root = new JSONArray();
+                        ArrayList<LibraryEntry> entries = factory.getAll();
 
-                exploreEntries(root, entries, -1);
-                String json = new JSONObject().put("entries", root).toString(4);
+                        exploreEntries(root, entries, -1);
+                        return new JSONObject().put("entries", root).toString(4);
+                    }
+                });
+
 
                 while (exchange.getRequestBody().read() != -1) {}
 

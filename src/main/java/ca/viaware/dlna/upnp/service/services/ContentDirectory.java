@@ -5,6 +5,7 @@ import ca.viaware.dlna.library.EntryType;
 import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
+import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
 import ca.viaware.dlna.upnp.service.*;
 import ca.viaware.dlna.upnp.service.base.Action;
@@ -93,45 +94,47 @@ public class ContentDirectory extends Service {
             new ActionArgument("UpdateID", "A_ARG_TYPE_UpdateID")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(final HashMap<String, Object> parameters) {
                 Log.info("Browse flag %0", parameters.get("BrowseFlag"));
-                ArrayList<LibraryEntry> entries = null;
-                LibraryFactory factory = Library.getFactory();
+                return (Result) Library.runInstance(new LibraryInstanceRunner() {
+                    @Override
+                    public Object run(LibraryFactory factory) {
+                        ArrayList<LibraryEntry> entries = null;
 
-                int id = Integer.parseInt((String) parameters.get("ObjectID"));
-                if (id == 0) id = -1; //UPnP spec: ID of 0 refers to root object
+                        int id = Integer.parseInt((String) parameters.get("ObjectID"));
+                        if (id == 0) id = -1; //UPnP spec: ID of 0 refers to root object
 
-                if (parameters.get("BrowseFlag").equals("BrowseDirectChildren")) {
-                    Log.info("Browsing for children of %0", parameters.get("ObjectID"));
-                    entries = factory.getChildren(id);
-                }
-                if (parameters.get("BrowseFlag").equals("BrowseMetadata")) {
-                    Log.info("Browsing metadata of %0", parameters.get("ObjectID"));
-                    entries = new ArrayList<LibraryEntry>();
-                    entries.add(factory.get(id));
-                }
-                if (entries != null) {
-                    Log.info("Found %0 entries", entries.size());
+                        if (parameters.get("BrowseFlag").equals("BrowseDirectChildren")) {
+                            Log.info("Browsing for children of %0", parameters.get("ObjectID"));
+                            entries = factory.getChildren(id);
+                        }
+                        if (parameters.get("BrowseFlag").equals("BrowseMetadata")) {
+                            Log.info("Browsing metadata of %0", parameters.get("ObjectID"));
+                            entries = new ArrayList<LibraryEntry>();
+                            entries.add(factory.get(id));
+                        }
+                        if (entries != null) {
+                            Log.info("Found %0 entries", entries.size());
 
-                    String xml = XMLUtils.escape(toXML(entries, factory));
-                    Log.info("XML: " + toXML(entries, factory));
+                            String xml = XMLUtils.escape(toXML(entries, factory));
+                            Log.info("XML: " + toXML(entries, factory));
 
-                    factory.getDatabase().close();
-
-                    Result result = new Result();
-                    result.put("Result", xml);
-                    result.put("NumberReturned", entries.size());
-                    result.put("TotalMatches", entries.size());
-                    result.put("UpdateID", updateID++);
-                    return result;
-                } else {
-                    Result result = new Result();
-                    result.put("Result", "");
-                    result.put("NumberReturned", 0);
-                    result.put("TotalMatches", 0);
-                    result.put("UpdateID", updateID++);
-                    return result;
-                }
+                            Result result = new Result();
+                            result.put("Result", xml);
+                            result.put("NumberReturned", entries.size());
+                            result.put("TotalMatches", entries.size());
+                            result.put("UpdateID", updateID++);
+                            return result;
+                        } else {
+                            Result result = new Result();
+                            result.put("Result", "");
+                            result.put("NumberReturned", 0);
+                            result.put("TotalMatches", 0);
+                            result.put("UpdateID", updateID++);
+                            return result;
+                        }
+                    }
+                });
             }
         };
     }
