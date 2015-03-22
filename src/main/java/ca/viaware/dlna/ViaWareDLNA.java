@@ -1,7 +1,7 @@
 package ca.viaware.dlna;
 
 import ca.viaware.api.logging.Log;
-import ca.viaware.dlna.database.threadsafe.DatabaseQueueManagerManager;
+import ca.viaware.dlna.database.threadsafe.DatabaseQueueManager;
 import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.filesystem.Watcher;
 import ca.viaware.dlna.library.model.LibraryFactory;
@@ -24,7 +24,7 @@ public class ViaWareDLNA {
         Log.info("Starting ViaWare UPnP Server v" + VERSION);
 
         SettingsManager.loadSettings();
-        DatabaseQueueManagerManager.init();
+        DatabaseQueueManager.init();
 
         new Thread(new Runnable() {
             @Override
