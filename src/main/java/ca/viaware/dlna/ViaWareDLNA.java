@@ -26,21 +26,26 @@ public class ViaWareDLNA {
         SettingsManager.loadSettings();
         DatabaseQueueManagerManager.init();
 
-        Library.runInstance(new LibraryInstanceRunner() {
+        new Thread(new Runnable() {
             @Override
-            public Object run(LibraryFactory factory) {
-                factory.init();
-                factory.verifyFilesystemIntegrity();
+            public void run() {
+                Library.runInstance(new LibraryInstanceRunner() {
+                    @Override
+                    public Object run(LibraryFactory factory) {
+                        factory.init();
+                        factory.verifyFilesystemIntegrity();
 
-                //factory.deleteAll();
-                //factory.addRootFolder(new File("testfiles/testlib/music"), "Music");
-                //factory.addRootFolder(new File("testfiles/testlib/tv"), "TV");
-                //factory.addRootFolder(new File("G:/UserData/Music/YoutubePlaylists"), "Youtube Playlists");
-                //factory.addRootFolder(new File("G:/UserData/Videos"), "Videos");
+                        //factory.deleteAll();
+                        //factory.addRootFolder(new File("testfiles/testlib/music"), "Music");
+                        //factory.addRootFolder(new File("testfiles/testlib/tv"), "TV");
+                        //factory.addRootFolder(new File("G:/UserData/Music/YoutubePlaylists"), "Youtube Playlists");
+                        //factory.addRootFolder(new File("G:/UserData/Videos"), "Videos");
 
-                return null;
+                        return null;
+                    }
+                });
             }
-        });
+        }).start();
 
         DeviceManager.registerDevice(new MediaServer());
 
