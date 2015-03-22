@@ -204,33 +204,22 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
         }
     }
 
-    public void insert(LibraryEntry libraryEntry, boolean queue) {
+    public void insert(LibraryEntry libraryEntry, boolean useTransaction) {
         String sql = "INSERT INTO " + getTable() + " (name, type_id, parent, location) VALUES (?, ?, ?, ?);";
 
-        if (queue) {
-            ExtendedDatabase db = (ExtendedDatabase) getDatabase();
-            if (!db.isInTransaction()) {
-                db.prepareStatement(sql);
-            }
-            db.addToStatement(
-                libraryEntry.getName(),
-                libraryEntry.getTypeID(),
-                libraryEntry.getParent(),
-                libraryEntry.getLocation().getAbsolutePath()
-            );
-        } else {
-            finishStatement();
-            try {
-                getDatabase().query(sql,
-                    libraryEntry.getName(),
-                    libraryEntry.getTypeID(),
-                    libraryEntry.getParent(),
-                    libraryEntry.getLocation().getAbsolutePath()
-                );
-            } catch (ViaWareSQLException e) {
-                e.printStackTrace();
-            }
+        ExtendedDatabase db = (ExtendedDatabase) getDatabase();
+        if (!useTransaction) finishStatement();
+
+        if (!db.isInTransaction()) {
+            db.prepareStatement(sql);
         }
+        db.addToStatement(
+            libraryEntry.getName(),
+            libraryEntry.getTypeID(),
+            libraryEntry.getParent(),
+            libraryEntry.getLocation().getAbsolutePath()
+        );
+        if (!useTransaction) finishStatement();
     }
 
     @Override
