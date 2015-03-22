@@ -43,3 +43,6 @@ out/production
 
 #Maven
 target/
+
+#ViaWareDLNA output files
+data/library.db
