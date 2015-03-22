@@ -1,6 +1,5 @@
 package ca.viaware.dlna.database.threadsafe;
 
-import ca.viaware.api.logging.Log;
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteJob;
 import com.almworks.sqlite4java.SQLiteQueue;
@@ -20,7 +19,7 @@ public class DatabaseQueueManager {
         return queue.execute(new SQLiteJob<Object>() {
             @Override
             protected Object job(SQLiteConnection sqLiteConnection) throws Throwable {
-                return runner.start(sqLiteConnection);
+                return runner.run(sqLiteConnection);
             }
         }).complete();
     }

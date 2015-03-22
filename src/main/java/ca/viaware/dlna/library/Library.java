@@ -1,6 +1,5 @@
 package ca.viaware.dlna.library;
 
-import ca.viaware.api.logging.Log;
 import ca.viaware.dlna.database.ExtendedDatabase;
 import ca.viaware.dlna.database.threadsafe.DatabaseQueueManagerManager;
 import ca.viaware.dlna.database.threadsafe.SqlInstanceRunner;
@@ -13,7 +12,7 @@ public class Library {
     public static Object runInstance(final LibraryInstanceRunner runner) {
         return DatabaseQueueManagerManager.getDatabaseQueueManager().run(new SqlInstanceRunner() {
             @Override
-            protected Object run(SQLiteConnection connection) {
+            public Object run(SQLiteConnection connection) {
                 return runner.run(new LibraryFactory(new ExtendedDatabase(connection)));
             }
         });
