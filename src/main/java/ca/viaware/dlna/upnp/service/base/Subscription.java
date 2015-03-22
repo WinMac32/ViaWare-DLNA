@@ -1,10 +1,13 @@
 package ca.viaware.dlna.upnp.service.base;
 
 import ca.viaware.api.logging.Log;
+import ca.viaware.dlna.util.UrlParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
+import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -64,6 +67,8 @@ public class Subscription {
     }
 
     public void emitEvent(HashMap<String, Object> variables) {
+        Log.info("EVENT: Emitting event...");
+
         String xml = "<?xml version=\"1.0\"?>";
         xml += "<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">";
         for (Entry<String, Object> e : variables.entrySet()) {
@@ -75,23 +80,38 @@ public class Subscription {
 
         for (String s : deliveryUrls) {
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(s).openConnection();
-                connection.setRequestMethod("NOTIFY");
+                Log.info("Delivery URL %0", s);
 
-                connection.setRequestProperty("CONTENT-TYPE", "text/xml; charset=\"utf-8\"");
-                connection.setRequestProperty("NT", "upnp:event");
-                connection.setRequestProperty("NTS", "upnp:propchange");
-                connection.setRequestProperty("SID", "uuid:" + getId());
-                connection.setRequestProperty("SEQ", Long.toString(getEventKey()));
+                UrlParser url = new UrlParser(s);
 
-                connection.getOutputStream().write(xml.getBytes("UTF-8"));
-                connection.getOutputStream().close();
+                Log.info("EVENT: Sending event to %0 %1 %2", url.getHost(), url.getPort(), url.getPath());
 
-                if (connection.getResponseCode() == 200) {
-                    Log.info("Sent event to %0 successfully", s);
+                Socket socket = new Socket(url.getHost(), url.getPort());
+                PrintStream out = new PrintStream(socket.getOutputStream());
+
+                out.println("NOTIFY " + url.getPath() + " HTTP/1.1");
+
+                out.println("CONTENT-TYPE: text/xml; charset=\"utf-8\"");
+                out.println("NT: upnp:event");
+                out.println("NTS: upnp:propchange");
+                out.println("SID: uuid:" + getId());
+                out.println("SEQ: " + getEventKey());
+                out.println();
+
+                out.write(xml.getBytes("UTF-8"));
+                out.close();
+
+                Scanner scanner = new Scanner(socket.getInputStream());
+
+                String respMsg = scanner.nextLine();
+
+                if (respMsg.contains("200")) {
+                    Log.info("EVENT: Sent event to %0 successfully", s);
                 } else {
-                    Log.error("Unable to send event to %0, reason %1", s, connection.getResponseMessage());
+                    Log.error("EVENT: Unable to send event to %0, reason %1", s, respMsg);
                 }
+
+                scanner.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

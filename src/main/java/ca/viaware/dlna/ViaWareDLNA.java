@@ -14,6 +14,7 @@ import ca.viaware.dlna.upnp.device.DeviceManager;
 import ca.viaware.dlna.upnp.device.devices.MediaServer;
 import ca.viaware.dlna.webinterface.InterfaceServer;
 
+import java.io.File;
 import java.io.IOException;
 
 public class ViaWareDLNA {
@@ -40,6 +41,8 @@ public class ViaWareDLNA {
                         //factory.addRootFolder(new File("testfiles/testlib/tv"), "TV");
                         //factory.addRootFolder(new File("G:/UserData/Music/YoutubePlaylists"), "Youtube Playlists");
                         //factory.addRootFolder(new File("G:/UserData/Videos"), "Videos");
+                        //factory.addRootFolder(new File("/home/viaware/Music/YoutubePlaylists"), "Youtube Playlists");
+                        //factory.addRootFolder(new File("/home/viaware/Videos"), "Videos");
 
                         return null;
                     }

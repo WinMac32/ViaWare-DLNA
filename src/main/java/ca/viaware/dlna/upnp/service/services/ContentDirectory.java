@@ -169,7 +169,7 @@ public class ContentDirectory extends Service {
                         xml += "<upnp:class>object.item.imageItem</upnp:class>";
                         break;
                 }
-                xml += "<res protocolInfo=\"http-get:*:" + FileUtils.getMime(e.getLocation()) + ":*\" size=\"" + e.getLocation().length() + "\">";
+                xml += "<res protocolInfo=\"http-get:*:" + e.getMime() + ":*\" size=\"" + e.getLocation().length() + "\">";
                 xml += "http://" + serverConfig.getString("host") + ":" + serverConfig.getInt("port") + "/" + e.getId();
                 xml += "</res>";
                 xml += "</item>";

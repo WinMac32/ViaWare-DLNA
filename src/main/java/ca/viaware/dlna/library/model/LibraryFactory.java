@@ -22,20 +22,40 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
     @Override
     protected void generateTable() {
         try {
-            getDatabase().query("CREATE TABLE IF NOT EXISTS '" + getTable() + "' (" +
+            getDatabase().query("CREATE TABLE IF NOT EXISTS 'entries' (" +
                 "'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE," +
                 "'name' VARCHAR NOT NULL," +
                 "'location' VARCHAR NOT NULL," +
                 "'parent' INTEGER NOT NULL," +
-                "'type_id' INTEGER NOT NULL)");
-            getDatabase().query("CREATE INDEX IF NOT EXISTS 'parent_index' ON '" + getTable() + "' ('parent' ASC)");
+                "'type_id' INTEGER NOT NULL," +
+                "'mime' VARCHAR NOT NULL)");
+
+            getDatabase().query("CREATE TABLE IF NOT EXISTS 'song_info' (" +
+                "'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE," +
+                "'title' VARCHAR," +
+                "'album' VARCHAR," +
+                "'art_id' INTEGER," +
+                "'artist_id' INTEGER)");
+            
+            getDatabase().query("CREATE TABLE IF NOT EXISTS 'show_info' (" +
+                "'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE," +
+                "'title' VARCHAR," +
+                "'art_id' INTEGER)");
+
+            getDatabase().query("CREATE TABLE IF NOT EXISTS 'movie_info' (" +
+                "'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE," +
+                "'title' VARCHAR," +
+                "'art_id' INTEGER," +
+                "'release_date' DATETIME)");
+
+            getDatabase().query("CREATE INDEX IF NOT EXISTS 'parent_index' ON 'entries' ('parent' ASC)");
         } catch (ViaWareSQLException e) {
             e.printStackTrace();
         }
     }
 
     public void addRootFolder(File folder, String name) {
-        LibraryEntry entry = insertAndAdd(new LibraryEntry(-1, name, EntryType.CONTAINER, -1, folder.getAbsolutePath()));
+        LibraryEntry entry = insertAndAdd(new LibraryEntry(-1, name, EntryType.CONTAINER, -1, folder.getAbsolutePath(), "folder"));
         exploreFolder(folder, entry.getId());
         finishStatement();
     }
@@ -51,7 +71,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
     private LibraryEntry addFile(File f, int parent) {
         int type = EntryType.getEntryTypeFor(f);
         if (type != EntryType.UNRECOGNIZED) {
-            LibraryEntry e = new LibraryEntry(-1, FileUtils.removeExtension(f), type, parent, f.getAbsolutePath());
+            LibraryEntry e = new LibraryEntry(-1, FileUtils.removeExtension(f), type, parent, f.getAbsolutePath(), f.isDirectory() ? "folder" : FileUtils.getMime(f));
             insert(e, true);
             e.setId(getDatabase().getLastInsertedID());
             return e;
@@ -73,7 +93,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
     public ArrayList<LibraryEntry> getChildren(int parent) {
         ArrayList<LibraryEntry> entries = new ArrayList<LibraryEntry>();
         try {
-            String sql = "SELECT * FROM " + getTable() + " WHERE parent=?";
+            String sql = "SELECT * FROM entries WHERE parent=?";
             DatabaseResults results = getDatabase().query(sql, parent);
 
             for (int i = 0; i < results.getRowCount(); i++) {
@@ -87,7 +107,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
     }
 
     public LibraryEntry getByFile(File file) {
-        String sql = "SELECT * FROM " + getTable() + " WHERE location=?";
+        String sql = "SELECT * FROM entries WHERE location=?";
         try {
             DatabaseResults results = getDatabase().query(sql, file.getAbsolutePath());
             if (results.getRowCount() > 0) {
@@ -153,7 +173,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
         ArrayList<LibraryEntry> entries = new ArrayList<LibraryEntry>();
 
         try {
-            String sql = "SELECT * FROM " + getTable() + " WHERE type_id=?";
+            String sql = "SELECT * FROM entries WHERE type_id=?";
             DatabaseResults results = getDatabase().query(sql, type);
 
             for (int i = 0; i < results.getRowCount(); i++) {
@@ -167,7 +187,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
     }
 
     public int countChildren(int parent) {
-        String sql = "SELECT COUNT(*) AS 'count' FROM " + getTable() + " WHERE parent=?";
+        String sql = "SELECT COUNT(*) AS 'count' FROM entries WHERE parent=?";
         try {
             DatabaseResults results = getDatabase().query(sql, parent);
             return results.getRow(0).getInt("count");
@@ -184,19 +204,21 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
             databaseRow.getString("name"),
             databaseRow.getInt("type_id"),
             databaseRow.getInt("parent"),
-            databaseRow.getString("location")
+            databaseRow.getString("location"),
+            databaseRow.getString("mime")
         );
     }
 
     @Override
     public void update(LibraryEntry libraryEntry) {
-        String sql = "UPDATE " + getTable() + " SET name=?, type_id=?, parent=?, location=? WHERE id=?";
+        String sql = "UPDATE entries SET name=?, type_id=?, parent=?, location=?, mime=? WHERE id=?";
         try {
             getDatabase().query(sql,
                 libraryEntry.getName(),
                 libraryEntry.getTypeID(),
                 libraryEntry.getParent(),
                 libraryEntry.getLocation().getAbsolutePath(),
+                libraryEntry.getMime(),
                 libraryEntry.getId()
             );
         } catch (ViaWareSQLException e) {
@@ -205,7 +227,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
     }
 
     public void insert(LibraryEntry libraryEntry, boolean useTransaction) {
-        String sql = "INSERT INTO " + getTable() + " (name, type_id, parent, location) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO entries (name, type_id, parent, location, mime) VALUES (?, ?, ?, ?, ?);";
 
         ExtendedDatabase db = (ExtendedDatabase) getDatabase();
         if (!useTransaction) finishStatement();
@@ -217,7 +239,8 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
             libraryEntry.getName(),
             libraryEntry.getTypeID(),
             libraryEntry.getParent(),
-            libraryEntry.getLocation().getAbsolutePath()
+            libraryEntry.getLocation().getAbsolutePath(),
+            libraryEntry.getMime()
         );
         if (!useTransaction) finishStatement();
     }
@@ -234,7 +257,7 @@ public class LibraryFactory extends BaseFactory<LibraryEntry> {
 
     public void remove(LibraryEntry object, boolean recurse) {
         try {
-            getDatabase().query("DELETE FROM " + getTable() + " WHERE id=?", object.getId());
+            getDatabase().query("DELETE FROM entries WHERE id=?", object.getId());
         } catch (ViaWareSQLException e) {
             e.printStackTrace();
         }

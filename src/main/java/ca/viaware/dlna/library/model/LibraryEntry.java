@@ -8,14 +8,16 @@ public class LibraryEntry extends DatabaseObject {
 
     private String name;
     private int typeID;
+    private String mime;
     private int parent;
 
     private File location;
 
-    public LibraryEntry(int id, String name, int typeID, int parent, String location) {
+    public LibraryEntry(int id, String name, int typeID, int parent, String location, String mime) {
         super(id);
         this.name = name;
         this.typeID = typeID;
+        this.mime = mime;
         this.parent = parent;
         this.location = new File(location);
     }
@@ -38,5 +40,9 @@ public class LibraryEntry extends DatabaseObject {
 
     public File getLocation() {
         return location;
+    }
+
+    public String getMime() {
+        return mime;
     }
 }
