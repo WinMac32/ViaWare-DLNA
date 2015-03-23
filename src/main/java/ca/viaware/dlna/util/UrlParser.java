@@ -13,10 +13,12 @@ public class UrlParser {
         //Lol whats a regex? :3
         String[] split = url.split("[:][/][/]");
         protocol = split[0];
-        split = split[1].split("[/]", 1);
-        host = split[0].split("[:]")[0];
-        if (split[0].contains(":")) {
-            port = Integer.parseInt(StringUtils.cleanNumber(split[0].split("[:]")[1]));
+        split = split[1].split("[/]", 2);
+        String ip = split[0];
+        String[] ipParts = ip.split("[:]");
+        host = ipParts[0];
+        if (ip.contains(":")) {
+            port = Integer.parseInt(StringUtils.cleanNumber(ipParts[1]));
         } else {
             port = 80;
         }
