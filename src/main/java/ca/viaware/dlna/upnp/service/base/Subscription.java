@@ -89,17 +89,20 @@ public class Subscription {
                 Socket socket = new Socket(url.getHost(), url.getPort());
                 PrintStream out = new PrintStream(socket.getOutputStream());
 
+                byte[] bytes = xml.getBytes("UTF-8");
+
                 out.println("NOTIFY " + url.getPath() + " HTTP/1.1");
 
+                out.println("HOST: " + url.getHost() + ":" + url.getPort());
                 out.println("CONTENT-TYPE: text/xml; charset=\"utf-8\"");
+                out.println("CONTENT-LENGTH: " + bytes.length);
                 out.println("NT: upnp:event");
                 out.println("NTS: upnp:propchange");
                 out.println("SID: uuid:" + getId());
                 out.println("SEQ: " + getEventKey());
                 out.println();
 
-                out.write(xml.getBytes("UTF-8"));
-                out.close();
+                out.write(bytes);
 
                 Scanner scanner = new Scanner(socket.getInputStream());
 
