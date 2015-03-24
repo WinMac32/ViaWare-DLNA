@@ -6,6 +6,8 @@ import ca.viaware.dlna.Globals;
 import ca.viaware.dlna.soap.SoapAction;
 import ca.viaware.dlna.soap.SoapReader;
 import ca.viaware.dlna.soap.SoapWriter;
+import ca.viaware.dlna.upnp.device.Device;
+import ca.viaware.dlna.upnp.device.devices.MediaServer;
 import ca.viaware.dlna.upnp.service.Service;
 import ca.viaware.dlna.upnp.service.base.*;
 import ca.viaware.dlna.util.DateUtils;
@@ -24,9 +26,9 @@ import java.util.Map.Entry;
 
 public class ServiceContext implements HttpHandler {
 
-    private Service service;
+    private Service<? extends Device> service;
 
-    public ServiceContext(Service service) {
+    public ServiceContext(Service<? extends Device> service) {
         this.service = service;
     }
 
@@ -46,6 +48,7 @@ public class ServiceContext implements HttpHandler {
         xml += "<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">";
         xml += "<specVersion><major>" + service.getVersion() + "</major><minor>0</minor></specVersion>";
         xml += "<actionList>";
+
         for (Entry<String, Action> actionEntry : service.getActions().entrySet()) {
             xml += "<action>";
             xml += "<name>" + actionEntry.getKey() + "</name>";
@@ -138,7 +141,9 @@ public class ServiceContext implements HttpHandler {
                         }
 
                         Log.info("HTTP: CONTROL: Calling action %0 in service %1", actionName, service.getType());
-                        Result result = serviceAction.run(vals);
+                        //Call action this way so subclasses of service can override it...
+                        //I'm looking at you, AVTransport service :3
+                        Result result = service.callAction(actionName, vals);
 
                         SoapAction response = new SoapAction(actionName + "Response");
 

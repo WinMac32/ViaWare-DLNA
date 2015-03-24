@@ -1,5 +1,7 @@
 package ca.viaware.dlna.upnp.service.services;
 
+import ca.viaware.api.logging.Log;
+import ca.viaware.dlna.upnp.device.devices.MediaServer;
 import ca.viaware.dlna.upnp.service.*;
 import ca.viaware.dlna.upnp.service.base.Action;
 import ca.viaware.dlna.upnp.service.base.ActionArgument;
@@ -7,13 +9,17 @@ import ca.viaware.dlna.upnp.service.base.Result;
 import ca.viaware.dlna.upnp.service.base.StateVariable;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class ConnectionManager extends Service {
+public class ConnectionManager extends Service<MediaServer> {
 
-    public ConnectionManager() {
+    public ConnectionManager(MediaServer parent) {
+        super(parent);
+
         registerAction("GetProtocolInfo", getProtocolInfo());
         registerAction("GetCurrentConnectionIDs", getCurrentConnectionIDs());
         registerAction("GetCurrentConnectionInfo", getCurrentConnectionInfo());
+        registerAction("PrepareForConnection", prepareForConnection());
 
         setEventVar("SourceProtocolInfo", "");
         setEventVar("SinkProtocolInfo", "");
@@ -48,6 +54,27 @@ public class ConnectionManager extends Service {
             new StateVariable("A_ARG_TYPE_ConnectionID", "i4"),
             new StateVariable("A_ARG_TYPE_AVTransportID", "i4"),
             new StateVariable("A_ARG_TYPE_RcsID", "i4")
+        };
+    }
+
+    private Action prepareForConnection() {
+        return new Action(new ActionArgument[] {
+            new ActionArgument("RemoteProtocolInfo", "A_ARG_TYPE_ProtocolInfo"),
+            new ActionArgument("PeerConnectionManager", "A_ARG_TYPE_ConnectionManager"),
+            new ActionArgument("PeerConnectionID", "A_ARG_TYPE_ConnectionID"),
+            new ActionArgument("Direction", "A_ARG_TYPE_Direction")
+        }, new ActionArgument[] {
+            new ActionArgument("ConnectionID", "A_ARG_TYPE_ConnectionID"),
+            new ActionArgument("AVTransportID", "A_ARG_TYPE_AVTransportID")
+        }) {
+            @Override
+            protected Result handle(HashMap<String, Object> parameters) {
+                Log.info("Preparing for connection:");
+                for (Map.Entry<String, Object> e :parameters.entrySet()) {
+                    Log.info("%0 %1", e.getKey(), e.getValue());
+                }
+                return new Result();
+            }
         };
     }
 

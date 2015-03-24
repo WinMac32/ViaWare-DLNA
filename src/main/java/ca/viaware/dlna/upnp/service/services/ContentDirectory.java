@@ -7,6 +7,7 @@ import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
 import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
+import ca.viaware.dlna.upnp.device.devices.MediaServer;
 import ca.viaware.dlna.upnp.service.*;
 import ca.viaware.dlna.upnp.service.base.Action;
 import ca.viaware.dlna.upnp.service.base.ActionArgument;
@@ -19,12 +20,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ContentDirectory extends Service {
+public class ContentDirectory extends Service<MediaServer> {
 
     private JSONObject serverConfig;
     private int updateID = 1;
 
-    public ContentDirectory() {
+    public ContentDirectory(MediaServer parent) {
+        super(parent);
         serverConfig = SettingsManager.getServerConfig().getJSONObject("streamServer");
 
         registerAction("GetSearchCapabilities", getSearchCapabilities());

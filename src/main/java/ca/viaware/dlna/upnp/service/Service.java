@@ -1,5 +1,6 @@
 package ca.viaware.dlna.upnp.service;
 
+import ca.viaware.dlna.upnp.device.Device;
 import ca.viaware.dlna.upnp.service.base.Action;
 import ca.viaware.dlna.upnp.service.base.Result;
 import ca.viaware.dlna.upnp.service.base.StateVariable;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public abstract class Service {
+public abstract class Service<T extends Device> {
 
     private int uid;
 
@@ -23,13 +24,21 @@ public abstract class Service {
 
     private ArrayList<Subscription> subscriptions;
 
-    public Service() {
+    private T parent;
+
+    public Service(T parent) {
+        this.parent = parent;
+
         this.actions = new HashMap<String, Action>();
         this.eventVars = new HashMap<String, Object>();
         this.updatedEventVars = new HashMap<String, Object>();
         this.subscriptions = new ArrayList<Subscription>();
 
         this.uid = ServiceManager.getServiceUID();
+    }
+
+    private T getParent() {
+        return parent;
     }
 
     protected void registerAction(String name, Action action) {
