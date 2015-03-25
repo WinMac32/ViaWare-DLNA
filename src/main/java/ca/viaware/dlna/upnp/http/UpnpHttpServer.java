@@ -38,8 +38,7 @@ public class UpnpHttpServer {
             public void handle(HttpExchange exchange) throws IOException {
                 Log.info("HTTP: Got root context request... Sending generic response.");
                 try {
-                    InputStream in = exchange.getRequestBody();
-                    while (in.read() != -1) {}
+                    HttpUtils.emptyStream(exchange.getRequestBody());
 
                     String html = "";
 

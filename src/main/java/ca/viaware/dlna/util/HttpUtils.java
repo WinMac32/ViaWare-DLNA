@@ -22,8 +22,7 @@ public class HttpUtils {
 
     public static void sendXML(String xml, HttpExchange exchange) {
         try {
-            InputStream in = exchange.getRequestBody();
-            while (in.read() != -1) {}
+            emptyStream(exchange.getRequestBody());
 
             byte[] bytes = xml.getBytes("UTF-8");
 
@@ -41,8 +40,7 @@ public class HttpUtils {
 
     public static void sendImage(File file, String mime, HttpExchange exchange) {
         try {
-            InputStream in = exchange.getRequestBody();
-            while (in.read() != -1) {}
+            emptyStream(exchange.getRequestBody());
 
             byte[] bytes = FileReader.readFileRaw(file);
 
@@ -56,6 +54,10 @@ public class HttpUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void emptyStream(InputStream stream) throws IOException {
+        while (stream.read() != -1) {}
     }
 
 }

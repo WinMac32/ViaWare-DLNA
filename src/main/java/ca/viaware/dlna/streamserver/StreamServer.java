@@ -8,6 +8,7 @@ import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
 import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
+import ca.viaware.dlna.util.HttpUtils;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -35,7 +36,7 @@ public class StreamServer {
                 final int entryId = Integer.parseInt(StringUtils.cleanNumber(exchange.getRequestURI().getPath()));
                 Log.info("Got request for library item %0", entryId);
 
-                while (exchange.getRequestBody().read() != -1) {}
+                HttpUtils.emptyStream(exchange.getRequestBody());
 
                 LibraryEntry entry = (LibraryEntry) Library.runInstance(new LibraryInstanceRunner() {
                     @Override

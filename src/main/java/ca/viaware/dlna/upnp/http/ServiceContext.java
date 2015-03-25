@@ -227,7 +227,7 @@ public class ServiceContext implements HttpHandler {
                 service.addSubscription(subscription);
 
                 try {
-                    while (exchange.getRequestBody().read() != -1) {}
+                    HttpUtils.emptyStream(exchange.getRequestBody());
 
                     headers = exchange.getResponseHeaders();
                     headers.set("SERVER", Globals.SERVER);
@@ -248,7 +248,7 @@ public class ServiceContext implements HttpHandler {
                 }
 
                 int sid = Integer.parseInt(StringUtils.cleanNumber(headers.getFirst("SID")));
-                while (exchange.getRequestBody().read() != -1) {}
+                HttpUtils.emptyStream(exchange.getRequestBody());
 
                 if (service.cancelSubscription(sid)) {
                     exchange.sendResponseHeaders(200, 0);
@@ -267,7 +267,7 @@ public class ServiceContext implements HttpHandler {
     private void httpError(HttpExchange exchange, int error, String desc) {
         Log.error("HTTP: Error %0 %1", error, desc);
         try {
-            while (exchange.getRequestBody().read() != -1) {}
+            HttpUtils.emptyStream(exchange.getRequestBody());
             exchange.sendResponseHeaders(error, 0);
             exchange.getResponseBody().close();
         } catch (IOException e) {
