@@ -71,7 +71,7 @@ public class DeviceContext {
 
         descXml += "<serviceList>";
 
-        for (Service service : device.getServices()) {
+        for (Service<? extends Device> service : device.getServices()) {
             String context = "/" + device.getUid() + "/" + service.getUid() + "/";
 
             descXml += "<service>";
