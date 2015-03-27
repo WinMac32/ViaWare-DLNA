@@ -20,28 +20,20 @@
 package ca.viaware.dlna.upnp.device.devices;
 
 import ca.viaware.dlna.upnp.device.Device;
-import ca.viaware.dlna.upnp.service.Service;
 import ca.viaware.dlna.upnp.service.services.ConnectionManager;
 import ca.viaware.dlna.upnp.service.services.ContentDirectory;
-import ca.viaware.dlna.upnp.service.services.av.AVTransport;
-
-import javax.print.attribute.standard.Media;
-import java.util.ArrayList;
 
 public class MediaServer extends Device {
 
     private ConnectionManager connectionManager;
     private ContentDirectory contentDirectory;
-    private AVTransport avTransport;
 
     public MediaServer() {
         this.connectionManager = new ConnectionManager(this);
         this.contentDirectory = new ContentDirectory(this);
-        this.avTransport = new AVTransport(this);
 
         addService(connectionManager);
         addService(contentDirectory);
-        addService(avTransport);
     }
 
     public ConnectionManager getConnectionManager() {
@@ -50,10 +42,6 @@ public class MediaServer extends Device {
 
     public ContentDirectory getContentDirectory() {
         return contentDirectory;
-    }
-
-    public AVTransport getAvTransport() {
-        return avTransport;
     }
 
     @Override
