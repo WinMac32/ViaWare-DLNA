@@ -26,7 +26,6 @@ import ca.viaware.dlna.soap.SoapAction;
 import ca.viaware.dlna.soap.SoapReader;
 import ca.viaware.dlna.soap.SoapWriter;
 import ca.viaware.dlna.upnp.device.Device;
-import ca.viaware.dlna.upnp.device.devices.MediaServer;
 import ca.viaware.dlna.upnp.service.Service;
 import ca.viaware.dlna.upnp.service.base.*;
 import ca.viaware.dlna.util.DateUtils;
@@ -40,7 +39,10 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class ServiceContext implements HttpHandler {

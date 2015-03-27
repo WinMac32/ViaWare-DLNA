@@ -21,7 +21,10 @@ package ca.viaware.dlna.soap;
 
 import ca.viaware.dlna.util.SoapUtils;
 
-import javax.xml.soap.*;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

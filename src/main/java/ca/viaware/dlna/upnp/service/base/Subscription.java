@@ -22,15 +22,11 @@ package ca.viaware.dlna.upnp.service.base;
 import ca.viaware.api.logging.Log;
 import ca.viaware.dlna.util.UrlParser;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.HttpURLConnection;
 import java.net.Socket;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Subscription {

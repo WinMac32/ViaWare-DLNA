@@ -27,7 +27,6 @@ import ca.viaware.dlna.upnp.service.base.Subscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public abstract class Service<T extends Device> {
 

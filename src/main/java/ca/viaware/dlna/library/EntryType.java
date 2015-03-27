@@ -19,8 +19,6 @@
 
 package ca.viaware.dlna.library;
 
-import ca.viaware.api.logging.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

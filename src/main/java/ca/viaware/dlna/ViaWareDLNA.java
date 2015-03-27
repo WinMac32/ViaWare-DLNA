@@ -26,14 +26,13 @@ import ca.viaware.dlna.library.filesystem.Watcher;
 import ca.viaware.dlna.library.model.LibraryFactory;
 import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
-import ca.viaware.dlna.streamserver.StreamServer;
-import ca.viaware.dlna.upnp.http.UpnpHttpServer;
 import ca.viaware.dlna.ssdp.SSDPService;
+import ca.viaware.dlna.streamserver.StreamServer;
 import ca.viaware.dlna.upnp.device.DeviceManager;
 import ca.viaware.dlna.upnp.device.devices.MediaServer;
+import ca.viaware.dlna.upnp.http.UpnpHttpServer;
 import ca.viaware.dlna.webinterface.InterfaceServer;
 
-import java.io.File;
 import java.io.IOException;
 
 public class ViaWareDLNA {

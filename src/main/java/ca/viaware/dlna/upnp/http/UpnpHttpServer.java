@@ -20,12 +20,10 @@
 package ca.viaware.dlna.upnp.http;
 
 import ca.viaware.api.logging.Log;
-import ca.viaware.dlna.Globals;
 import ca.viaware.dlna.ViaWareDLNA;
 import ca.viaware.dlna.settings.SettingsManager;
 import ca.viaware.dlna.upnp.device.Device;
 import ca.viaware.dlna.upnp.device.DeviceManager;
-import ca.viaware.dlna.upnp.service.Service;
 import ca.viaware.dlna.util.HttpUtils;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -33,9 +31,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 
 public class UpnpHttpServer {

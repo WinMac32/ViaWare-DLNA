@@ -19,8 +19,6 @@
 
 package ca.viaware.dlna.upnp.service.base;
 
-import ca.viaware.api.logging.Log;
-
 import java.util.HashMap;
 
 public abstract class Action {

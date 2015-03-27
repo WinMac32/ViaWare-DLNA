@@ -21,7 +21,7 @@ package ca.viaware.dlna.upnp.service.services;
 
 import ca.viaware.api.logging.Log;
 import ca.viaware.dlna.upnp.device.devices.MediaServer;
-import ca.viaware.dlna.upnp.service.*;
+import ca.viaware.dlna.upnp.service.Service;
 import ca.viaware.dlna.upnp.service.base.Action;
 import ca.viaware.dlna.upnp.service.base.ActionArgument;
 import ca.viaware.dlna.upnp.service.base.Result;

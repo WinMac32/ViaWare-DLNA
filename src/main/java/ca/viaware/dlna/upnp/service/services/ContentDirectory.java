@@ -27,12 +27,11 @@ import ca.viaware.dlna.library.model.LibraryFactory;
 import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
 import ca.viaware.dlna.upnp.device.devices.MediaServer;
-import ca.viaware.dlna.upnp.service.*;
+import ca.viaware.dlna.upnp.service.Service;
 import ca.viaware.dlna.upnp.service.base.Action;
 import ca.viaware.dlna.upnp.service.base.ActionArgument;
 import ca.viaware.dlna.upnp.service.base.Result;
 import ca.viaware.dlna.upnp.service.base.StateVariable;
-import ca.viaware.dlna.util.FileUtils;
 import ca.viaware.dlna.util.XMLUtils;
 import org.json.JSONObject;
 

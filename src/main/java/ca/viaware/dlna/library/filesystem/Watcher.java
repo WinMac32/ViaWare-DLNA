@@ -25,7 +25,6 @@ import ca.viaware.dlna.library.Library;
 import ca.viaware.dlna.library.model.LibraryEntry;
 import ca.viaware.dlna.library.model.LibraryFactory;
 import ca.viaware.dlna.library.model.LibraryInstanceRunner;
-import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
 
 import java.io.File;
 import java.io.IOException;
