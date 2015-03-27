@@ -22,13 +22,16 @@ package ca.viaware.dlna.upnp.device;
 import ca.viaware.dlna.upnp.service.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class Device {
 
     private ArrayList<Service<? extends Device>> services;
+    private HashMap<String, String> otherDevices;
 
     public Device() {
         services = new ArrayList<Service<? extends Device>>();
+        otherDevices = new HashMap<String, String>();
     }
 
     protected void addService(Service<? extends Device> s) {
@@ -37,6 +40,16 @@ public abstract class Device {
 
     public ArrayList<Service<? extends Device>> getServices() {
         return services;
+    }
+
+    //Called from the SSDP searcher thread
+    public synchronized void addOtherDevice(String id, String location) {
+        otherDevices.put(id, location);
+    }
+
+    public String getLocationOfOther(String id) {
+        if (otherDevices.containsKey(id)) return otherDevices.get(id);
+        return null;
     }
 
     public abstract String getType();

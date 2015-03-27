@@ -43,9 +43,12 @@ public class ContentDirectory extends Service<MediaServer> {
     private JSONObject serverConfig;
     private int updateID = 1;
 
+    private HashMap<String, String> deviceCapabilities;
+
     public ContentDirectory(MediaServer parent) {
         super(parent);
         serverConfig = SettingsManager.getServerConfig().getJSONObject("streamServer");
+        deviceCapabilities = new HashMap<String, String>();
 
         registerAction("GetSearchCapabilities", getSearchCapabilities());
         registerAction("GetSortCapabilities", getSortCapabilities());
@@ -65,7 +68,7 @@ public class ContentDirectory extends Service<MediaServer> {
             new ActionArgument("SearchCaps", "SearchCapabilities")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("SearchCaps", "");
                 return result;
@@ -78,7 +81,7 @@ public class ContentDirectory extends Service<MediaServer> {
             new ActionArgument("SortCaps", "SortCapabilities")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("SortCaps", "");
                 return result;
@@ -91,7 +94,7 @@ public class ContentDirectory extends Service<MediaServer> {
             new ActionArgument("Id", "SystemUpdateID")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("Id", 0);
                 return result;
@@ -114,8 +117,9 @@ public class ContentDirectory extends Service<MediaServer> {
             new ActionArgument("UpdateID", "A_ARG_TYPE_UpdateID")
         }) {
             @Override
-            public Result handle(final HashMap<String, Object> parameters) {
+            public Result handle(String caller, final HashMap<String, Object> parameters) {
                 Log.info("Browse flag %0", parameters.get("BrowseFlag"));
+
                 return (Result) Library.runInstance(new LibraryInstanceRunner() {
                     @Override
                     public Object run(LibraryFactory factory) {
@@ -214,7 +218,7 @@ public class ContentDirectory extends Service<MediaServer> {
             new ActionArgument("UpdateID", "A_ARG_TYPE_UpdateID")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("Result", "Wat");
                 result.put("NumberReturned", 0);

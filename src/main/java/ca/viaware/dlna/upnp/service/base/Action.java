@@ -58,10 +58,10 @@ public abstract class Action {
         return null;
     }
 
-    public Result run(HashMap<String, Object> parameters) {
-        return handle(parameters);
+    public Result run(String caller, HashMap<String, Object> parameters) {
+        return handle(caller, parameters);
     }
 
-    protected abstract Result handle(HashMap<String, Object> parameters);
+    protected abstract Result handle(String caller, HashMap<String, Object> parameters);
 
 }

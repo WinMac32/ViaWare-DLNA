@@ -89,4 +89,11 @@ public class HttpParser {
         return headers.containsKey(key.toLowerCase());
     }
 
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public String getError() {
+        return error;
+    }
 }

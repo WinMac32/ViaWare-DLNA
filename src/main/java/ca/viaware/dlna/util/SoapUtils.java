@@ -19,17 +19,33 @@
 
 package ca.viaware.dlna.util;
 
+import ca.viaware.api.logging.Log;
+import ca.viaware.dlna.Globals;
+import ca.viaware.dlna.soap.SoapAction;
+import ca.viaware.dlna.soap.SoapReader;
+import ca.viaware.dlna.soap.SoapWriter;
+import ca.viaware.dlna.webinterface.InterfaceServer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SoapUtils {
 
@@ -53,6 +69,45 @@ public class SoapUtils {
             transformer.transform(domSource, result);
             return writer.toString();
         } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static HashMap<String, String> query(String url, SoapAction action, String soapAction) {
+        SoapWriter writer = new SoapWriter();
+        writer.addAction(action, soapAction);
+
+        try {
+            byte[] soap = writer.getSoap().getBytes("UTF-8");
+
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Soapaction", soapAction);
+            conn.setRequestProperty("Content-type", "text/xml;charset=\"utf-8\"");
+            conn.setRequestProperty("User-Agent", Globals.SERVER);
+            conn.setRequestProperty("Content-Length", Integer.toString(soap.length));
+
+            conn.getOutputStream().write(soap);
+
+            if (conn.getResponseMessage().contains("200")) {
+                SoapReader reader = new SoapReader();
+                MimeHeaders headers = new MimeHeaders();
+                for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
+                    headers.addHeader(entry.getKey(), entry.getValue().get(0));
+                }
+                SOAPMessage message = MessageFactory.newInstance().createMessage(headers, conn.getInputStream());
+                ArrayList<SoapAction> soapActions = reader.readSoap(message);
+                if (soapActions.size() > 0) {
+                    return soapActions.get(0).getValues();
+                }
+            } else {
+                Log.error("Unable to send SOAP action to %0, reason %1", url, conn.getResponseMessage());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SOAPException e) {
             e.printStackTrace();
         }
         return null;

@@ -162,9 +162,9 @@ public class ServiceContext implements HttpHandler {
                         }
 
                         Log.info("HTTP: CONTROL: Calling action %0 in service %1", actionName, service.getType());
+
                         //Call action this way so subclasses of service can override it...
-                        //I'm looking at you, AVTransport service :3
-                        Result result = service.callAction(actionName, vals);
+                        Result result = service.callAction(actionName, exchange.getRemoteAddress().getHostName() + ";" + headers.getHeader("USER-AGENT")[0], vals);
 
                         SoapAction response = new SoapAction(actionName + "Response");
 

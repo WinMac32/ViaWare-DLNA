@@ -64,6 +64,9 @@ public class SSDPService extends Thread {
         try {
             this.listener = new MulticastListener(this);
             this.listener.start();
+
+            Searcher searcher = new Searcher(this.outSock);
+            searcher.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

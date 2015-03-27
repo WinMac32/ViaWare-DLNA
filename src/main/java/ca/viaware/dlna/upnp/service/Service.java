@@ -55,7 +55,7 @@ public abstract class Service<T extends Device> {
         this.uid = ServiceManager.getServiceUID();
     }
 
-    private T getParent() {
+    protected T getParent() {
         return parent;
     }
 
@@ -80,9 +80,9 @@ public abstract class Service<T extends Device> {
         this.updatedEventVars.clear();
     }
 
-    public Result callAction(String name, HashMap<String, Object> args) {
+    public Result callAction(String name, String caller, HashMap<String, Object> args) {
         if (this.actions.containsKey(name)) {
-            return this.actions.get(name).run(args);
+            return this.actions.get(name).run(caller, args);
         }
         return null;
     }

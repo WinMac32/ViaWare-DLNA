@@ -87,7 +87,7 @@ public class ConnectionManager extends Service<MediaServer> {
             new ActionArgument("AVTransportID", "A_ARG_TYPE_AVTransportID")
         }) {
             @Override
-            protected Result handle(HashMap<String, Object> parameters) {
+            protected Result handle(String caller, HashMap<String, Object> parameters) {
                 Log.info("Preparing for connection:");
                 for (Map.Entry<String, Object> e :parameters.entrySet()) {
                     Log.info("%0 %1", e.getKey(), e.getValue());
@@ -103,7 +103,7 @@ public class ConnectionManager extends Service<MediaServer> {
             new ActionArgument("Sink", "SinkProtocolInfo")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("Source", "");
                 result.put("Sink", "");
@@ -117,7 +117,7 @@ public class ConnectionManager extends Service<MediaServer> {
             new ActionArgument("ConnectionIDs", "CurrentConnectionIDs")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("ConnectionIDs", "");
                 return result;            }
@@ -137,7 +137,7 @@ public class ConnectionManager extends Service<MediaServer> {
             new ActionArgument("Status", "A_ARG_TYPE_ConnectionStatus")
         }) {
             @Override
-            public Result handle(HashMap<String, Object> parameters) {
+            public Result handle(String caller, HashMap<String, Object> parameters) {
                 Result result = new Result();
                 result.put("RcsID", 0);
                 result.put("AVTransportID", 0);
