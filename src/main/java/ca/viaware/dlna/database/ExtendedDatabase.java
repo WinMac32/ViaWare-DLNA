@@ -49,19 +49,7 @@ public class ExtendedDatabase extends Database {
 
     public void addToStatement(Object... args) {
         try {
-            for (int i = 0; i < args.length; i++) {
-                if (args[i] instanceof Double) {
-                    statement.bind(i+1, (Double) args[i]);
-                } else if (args[i] instanceof Integer) {
-                    statement.bind(i+1, (Integer) args[i]);
-                } else if (args[i] instanceof String) {
-                    statement.bind(i+1, (String) args[i]);
-                } else if (args[i] instanceof Long) {
-                    statement.bind(i+1, (Long) args[i]);
-                } else {
-                    Log.error("Argument " + i + " is invalid type!");
-                }
-            }
+            bindParams(statement, args);
             statement.step();
             statement.reset();
         } catch (SQLiteException e) {
@@ -89,19 +77,7 @@ public class ExtendedDatabase extends Database {
             DatabaseResults results = new DatabaseResults();
             SQLiteStatement statement = connection.prepare(sql);
 
-            for (int i = 0; i < args.length; i++) {
-                if (args[i] instanceof Double) {
-                    statement.bind(i+1, (Double) args[i]);
-                } else if (args[i] instanceof Integer) {
-                    statement.bind(i+1, (Integer) args[i]);
-                } else if (args[i] instanceof String) {
-                    statement.bind(i+1, (String) args[i]);
-                } else if (args[i] instanceof Long) {
-                    statement.bind(i+1, (Long) args[i]);
-                } else {
-                    Log.error("Argument " + i + " is invalid type!");
-                }
-            }
+            bindParams(statement, args);
 
             while (statement.step()) {
                 DatabaseRow row = new DatabaseRow();
@@ -116,6 +92,22 @@ public class ExtendedDatabase extends Database {
             return results;
         } catch (SQLiteException e) {
             throw new ViaWareSQLException(e);
+        }
+    }
+
+    private void bindParams(SQLiteStatement statement, Object[] args) throws SQLiteException {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Double) {
+                statement.bind(i+1, (Double) args[i]);
+            } else if (args[i] instanceof Integer) {
+                statement.bind(i+1, (Integer) args[i]);
+            } else if (args[i] instanceof String) {
+                statement.bind(i+1, (String) args[i]);
+            } else if (args[i] instanceof Long) {
+                statement.bind(i+1, (Long) args[i]);
+            } else {
+                Log.error("Argument " + i + " is invalid type!");
+            }
         }
     }
 }
