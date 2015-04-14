@@ -28,6 +28,7 @@ import ca.viaware.dlna.library.model.LibraryInstanceRunner;
 import ca.viaware.dlna.settings.SettingsManager;
 import ca.viaware.dlna.ssdp.SSDPService;
 import ca.viaware.dlna.streamserver.StreamServer;
+import ca.viaware.dlna.streamserver.rtsp.RTSPServer;
 import ca.viaware.dlna.upnp.device.DeviceManager;
 import ca.viaware.dlna.upnp.device.devices.MediaServer;
 import ca.viaware.dlna.upnp.http.UpnpHttpServer;
@@ -46,10 +47,8 @@ public class ViaWareDLNA {
         DatabaseQueueManager.init();
 
         new Thread(new Runnable() {
-            @Override
             public void run() {
                 Library.runInstance(new LibraryInstanceRunner() {
-                    @Override
                     public Object run(LibraryFactory factory) {
                         factory.init();
                         factory.verifyFilesystemIntegrity();
@@ -78,6 +77,9 @@ public class ViaWareDLNA {
 
         StreamServer streamServer = new StreamServer();
         streamServer.start();
+
+        RTSPServer rtspServer = new RTSPServer();
+        new Thread(rtspServer).start();
 
         InterfaceServer interfaceServer = new InterfaceServer();
         interfaceServer.start();

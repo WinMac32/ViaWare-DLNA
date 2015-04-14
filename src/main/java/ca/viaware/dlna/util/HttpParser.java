@@ -96,4 +96,8 @@ public class HttpParser {
     public String getError() {
         return error;
     }
+
+    public HashMap<String, String> getHeaders() {
+        return headers;
+    }
 }
