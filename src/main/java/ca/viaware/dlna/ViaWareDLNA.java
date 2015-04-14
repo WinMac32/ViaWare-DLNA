@@ -47,8 +47,10 @@ public class ViaWareDLNA {
         DatabaseQueueManager.init();
 
         new Thread(new Runnable() {
+            @Override
             public void run() {
                 Library.runInstance(new LibraryInstanceRunner() {
+                    @Override
                     public Object run(LibraryFactory factory) {
                         factory.init();
                         factory.verifyFilesystemIntegrity();
